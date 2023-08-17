@@ -18,11 +18,13 @@ calc_correct_id_lightning = 0
 calc_correct_id_holy = 0
 attack_element_correct_id = 10000
 
-player_str = 
-player_dex = 
-player_int = 
-player_fai = 
-player_arc = 
+player_stats = {
+    'str': None,
+    'dex': None,
+    'int': None,
+    'fai': None,
+    'arc': None,
+} # TODO: Get user input and make these not be None anymore
 
 CalcCorrectGraph = {
     '0': {'stat0': 1, 'stat1': 18, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 25, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling default
@@ -33,7 +35,30 @@ CalcCorrectGraph = {
     '8': {'stat0': 1, 'stat1': 16, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 25, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling quality
 }
 
+
+CalcCorrectGraph = {
+    '0': {'stat': [1, 18, 60, 80, 150], #... TODO: FIXME 
+          }
+}
+
 AttackElementCorrectParam = {
+    '10000': {'str': {
+                'phys': True,
+                'magic': False,
+                'fire': False,
+                'lightning': False,
+                'holy': False,
+                },
+              'dex': {
+                'phys': True,
+                'magic': False,
+                'fire': False,
+                'lightning': True,
+                'holy': False,
+              },
+            }, #... TODO
+    '10005': None, #... TODO
+}
     '10000': {'phys_str': True, 'phys_dex': True, 'phys_int': False, 'phys_fai': False, 'phys_arc': False, 'magic_str': False, 'magic_dex': False, 'magic_int': True, 'magic_fai': False, 'magic_arc': False, 'fire_str': False, 'fire_dex': False, 'fire_int': False, 
               'fire_fai': True, 'fire_arc': False, 'lightning_str': False, 'lightning_dex': True, 'lightning_int': False, 'lightning_fai': False, 'lightning_arc': False, 'holy_str': False, 'holy_dex': False, 'holy_int': False, 'holy_fai': True, 'holy_arc': False},
     '10005': {'phys_str': True, 'phys_dex': True, 'phys_int': False, 'phys_fai': False, 'phys_arc': False, 'magic_str': False, 'magic_dex': False, 'magic_int': True, 'magic_fai': False, 'magic_arc': False, 'fire_str': True, 'fire_dex': False, 'fire_int': False, 
@@ -79,6 +104,36 @@ scaled_holy_weapon = base_holy_weapon * reinforce_param_weapon_holy
 #this is the bulk of the formula, including 25 iterations of damage type-stat values based on AttackElementCorrectParam. All of it is the same formula; only the variables are different.
 
 #phys damage
+
+output_values = {}
+
+for char_attr in AttackElementCorrectParam[attack_element_correct_id]:
+    for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
+        if val:
+            pass #TODO: Finish writing this thing
+            # TODO: Instead of calc_correct_id_phys, we need to make some kind of dictionary called something like calc_correct_id that has another nested dict inside it; the nested dict should have keys that are damage types and values that are the numbers for a specific weapon. You might need to essentially parse the whole spreadsheet to get this and then filter in only the relevant numbers
+            tmp = sorted(CalcCorrectGraph[calc_correct_id][dmg_type]['stat'].append(player[char_attr]))
+            # tmp now contains the player attribute, along with all of the values from CalcCorrectGraph's "stat" block for this id
+            idx = index(player[char_attr])
+            ratio = (player[char_attr] - CalcCorrectGraph[calc_correct_id][dmg_type]['stat'][idx - 1]) / (CalcCorrectGraph[calc_correct_id][dmg_type]['stat'][idx] - CalcCorrectGraph[calc_correct_id][dmg_type]['stat'][idx - 1])
+            if CalcCorrectGraph[calc_correct_id][dmg_type]['exponent'][idx - 1] < 0:
+                growth = ratio ** CalcCorrectGraph[calc_correct_id][dmg_type]['exponent'][idx - 1]
+            else:
+                growth = 1 - ((1 - ratio) ** abs(CalcCorrectGraph[calc_correct_id][dmg_type]['exponent'][idx - 1])
+            output = CalcCorrectGraph[calc_correct_id][dmg_type]['grow'][idx - 1] + ((CalcCorrectGraph[calc_correct_id][dmg_type]['grow'][idx] - CalcCorrectGraph[calc_correct_id][dmg_type]['grow'][idx - 1]) * growth)
+            output_values[dmg_type] = output
+        else:
+            output_values[char_attr] = 0
+
+"""
+output_values will look like this when it's full:
+{
+  'str': 0,
+  'int': 30,
+  ...
+}
+"""
+
 if AttackElementCorrectParam[attack_element_correct_id]['phys_str'] is False:
     str_output = 0
 else:
