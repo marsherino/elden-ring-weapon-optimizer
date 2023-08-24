@@ -1,0 +1,23 @@
+[GLOBAL]
+pants_version = "2.16.0"
+
+backend_packages = [
+  "pants.backend.python",
+  "pants.backend.python.lint.pylint",
+]
+
+[python]
+interpreter_constraints = ["CPython==3.11.*"]
+
+[python-bootstrap]
+search_path = [
+    "<PYENV>",
+    "<PATH>",
+    "/usr/local/bin",
+]
+
+[source]
+root_patterns = ["src/", "test/"]
+
+[anonymous-telemetry]
+enabled = false

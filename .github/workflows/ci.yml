@@ -1,0 +1,32 @@
+name: Lint and Test
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: pantsbuild/actions/init-pants@v5-scie-pants
+        with:
+          gha-cache-key: v0
+          named-caches-hash: ${{ hashFiles('python-default.lock') }}
+          cache-lmdb-store: 'true'
+      - name: Test
+        run: |
+          PANTS_CONFIG_FILES=pants.ci.toml pants test --test-output=all test/
+      - name: Upload pants log
+        uses: actions/upload-artifact@v3
+        with:
+          name: pants-log
+          path: .pants.d/pants.log
+        if: always()  # We want the log even on failures.
