@@ -639,8 +639,16 @@ def walk_weapons(attack_element_correct_id, weapon_id, player):
 """
 output_values will look like this when it's full:
 {
-  'phys': 0,
-  'magic': 30,
+  'str': {
+    'phys': 0,
+    'magic': 30,
+    ...
+  },
+  'dex': {
+    'phys': 14,
+    'magic': 108,
+    ...
+  }
   ...
 }
 """
