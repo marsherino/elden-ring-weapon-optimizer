@@ -28,6 +28,9 @@ calc_correct_id_lightning = 0
 calc_correct_id_holy = 0
 attack_element_correct_id = 10000
 
+PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
+DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
+
 player_stats = {
     'str': None,
     'dex': None,
@@ -35,6 +38,7 @@ player_stats = {
     'fai': None,
     'arc': None,
 } # TODO: Get user input and make these not be None anymore
+
 
 
 CalcCorrectGraph = {
@@ -651,44 +655,33 @@ ReinforceParamWeaponScaling = {
     }
 }
 
+
 #weapon upgrades component
-def base_damage_reinforcement(weapon_id, reinforce_type_id, scaling_multiplier):
+def base_damage_reinforcement(weapon_id, reinforce_type_id):
     reinforce_base_damage = {}
 
-    for dmg_type, val in WeaponDamage[dmg_type].items():
-       if val is 0:
-           reinforce_base_damage[dmg_type] = 0
-       else:
-           tmp_WeaponDamage = WeaponDamage[str(weapon_id)][dmg_type].copy()
-           tmp_ScalingModifier = ReinforceParamWeaponDamage[str(reinforce_type_id)][scaling_multiplier].copy()
-           for i in tmp_WeaponDamage:
-               output = [item1 * item2 for item1, item2 in zip(tmp_WeaponDamage, tmp_ScalingModifier)]
-               reinforce_base_damage[dmg_type] = output
+    for key in list(WeaponDamage[weapon_id].keys()):
+      reinforce_base_damage[key] = WeaponDamage[weapon_id][key] * ReinforceParamWeaponDamage[reinforce_type_id]["weapon_" + key]
 
+    return reinforce_base_damage
 
 
 #weapon inherent scaling component
-def base_scaling_reinforcement(weapon_id, reinforce_type_id, scaling_multiplier):
+def base_scaling_reinforcement(weapon_id, reinforce_type_id):
     reinforce_base_scaling = {}
 
-    for char_attr, val in WeaponScaling[char_attr].items():
-       if val is 0:
-           reinforce_base_scaling[char_attr] = 0
-       else:
-           tmp_WeaponScaling = WeaponScaling[str(weapon_id)][char_attr].copy()
-           tmp_ScalingModifier = ReinforceParamWeaponScaling[str(reinforce_type_id)][scaling_multiplier].copy()
-           for i in tmp_WeaponScaling:
-               output = [item1 * item2 for item1, item2 in zip(tmp_WeaponScaling, tmp_ScalingModifier)]
-               reinforce_base_scaling[char_attr] = output
+    for key in list(WeaponScaling[weapon_id].keys()):
+      reinforce_base_scaling[key] = (WeaponScaling[weapon_id][key] * ReinforceParamWeaponScaling[reinforce_type_id]["scaling_" + key]) / 100
 
-
+    return reinforce_base_scaling
 
 
 #player scaling / softcap component
-def walk_weapons(attack_element_correct_id, weapon_id, player):
-    player_scaling_multiplier = {}
+def player_scaling_multiplier(attack_element_correct_id, weapon_id, player):
+    result = {}
 
     for char_attr in AttackElementCorrectParam[attack_element_correct_id]:
+        result[char_attr] = {}
         for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
             if val:
                 # TODO: Instead of calc_correct_id_phys, we need to make some kind of dictionary called something like calc_correct_id that has another nested dict inside it; the nested dict should have keys that are damage types and values that are the numbers for a specific weapon. You might need to essentially parse the whole spreadsheet to get this and then filter in only the relevant numbers
@@ -697,21 +690,28 @@ def walk_weapons(attack_element_correct_id, weapon_id, player):
                 tmp = sorted(tmp)
                 # tmp now contains the player attribute, along with all of the values from CalcCorrectGraph's "stat" block for this id
                 idx = tmp.index(player[char_attr])
-                print(f"char_attr: {char_attr}, dmg_type: {dmg_type}, idx: {idx}")
                 ratio = (player[char_attr] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1]) / (CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1])
+
                 if CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1] < 0:
                     growth = ratio ** CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1]
                 else:
                     growth = 1 - ((1 - ratio) ** abs(CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1]))
+
                 output = CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx - 1] + ((CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx - 1]) * growth)
-                if dmg_type in player_scaling_multiplier.keys():
-                    player_scaling_multiplier[dmg_type] += output
+
+                if dmg_type in list(result[char_attr].keys()):
+                    result[char_attr][dmg_type] += output
                 else:
-                    player_scaling_multiplier[dmg_type] = output
+                    result[char_attr][dmg_type] = output
             else:
-                if dmg_type not in player_scaling_multiplier.keys():
-                    player_scaling_multiplier[dmg_type] = 0
-    return player_scaling_multiplier
+                if dmg_type not in list(result[char_attr].keys()):
+                    result[char_attr][dmg_type] = 0
+
+    for _k, v in result.items():
+        for subk in list(v.keys()):
+            v[subk] = v[subk]/100
+
+    return result
 
 """
 output_values will look like this when it's full:
@@ -730,34 +730,43 @@ output_values will look like this when it's full:
 }
 """
 
-    
+
     # and then multiply them by the weapon dmg
 
 ###
 
+def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier):
+    result = {}
+    for dmg_type in DMG_TYPES:
+        dmg_type_val = 0
+        for char_attr in PLAYER_STATS:
+            dmg_type_val += (base_damage_reinforcement[dmg_type] * base_scaling_reinforcement[char_attr] * player_scaling_multiplier[char_attr][dmg_type])
+        result[dmg_type] = dmg_type_val
+    return result
+
 #Putting it together
 def main():
   damage_type_ar = {}
-  
+
   for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
       if val:
         final_damage = reinforce_base_damage[dmg_type] * (reinforce_base_scaling[char_attr] / 100) * player_scaling_multiplier[char_attr]
-      else: 
+      else:
           damage_type_ar[dmg_type] = 0
 
 
 
 
-      final_magic_damage = scaled_magic_weapon 
-      final_fire_damage = scaled_fire_weapon 
-      final_lightning_damage = scaled_lightning_weapon 
-      final_holy_damage = scaled_holy_weapon 
+      final_magic_damage = scaled_magic_weapon
+      final_fire_damage = scaled_fire_weapon
+      final_lightning_damage = scaled_lightning_weapon
+      final_holy_damage = scaled_holy_weapon
 
 
 
 
-    attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
-    return attack_rating
+      attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
+      return attack_rating
 
 if __name__ == '__main__':
     main()
