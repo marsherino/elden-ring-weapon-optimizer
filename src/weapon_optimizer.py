@@ -6,11 +6,21 @@ base_magic_weapon = 51
 base_fire_weapon = 0
 base_lightning_weapon = 0
 base_holy_weapon = 0
+base_str_scaling = 19
+base_dex_scaling = 45
+base_int_scaling = 19
+base_fai_scaling = 0
+base_arc_scaling = 0
 reinforce_param_weapon_phys = 2.35
 reinforce_param_weapon_magic = 2.35
 reinforce_param_weapon_fire = 2.35
 reinforce_param_weapon_lightning = 2.35
 reinforce_param_weapon_holy = 2.35
+reinforce_param_scaling_str = 1.3
+reinforce_param_scaling_dex = 2.8
+reinforce_param_scaling_int = 1.8
+reinforce_param_scaling_fai = 1.8
+reinforce_param_scaling_arc = 1.8
 calc_correct_id_phys = 2
 calc_correct_id_magic = 4
 calc_correct_id_fire = 0
@@ -601,15 +611,82 @@ CALC_CORRECT_DICT = {
     }
 }
 
-#weapon upgrades component
-scaled_phys_weapon = base_phys_weapon * reinforce_param_weapon_phys
-scaled_magic_weapon = base_magic_weapon * reinforce_param_weapon_magic
-scaled_fire_weapon = base_fire_weapon * reinforce_param_weapon_fire
-scaled_lightning_weapon = base_lightning_weapon * reinforce_param_weapon_lightning
-scaled_holy_weapon = base_holy_weapon * reinforce_param_weapon_holy
+WeaponDamage = {
+    '16030200': {
+        'phys': 95,
+        'magic': 51,
+        'fire': 0,
+        'lightning': 0,
+        'holy': 0,
+    }
+}
 
+WeaponScaling = {
+    '16030200': {
+        'str': 19,
+        'dex': 45,
+        'int': 19,
+        'fai': 0,
+        'arc': 0,
+    }
+}
+
+ReinforceParamWeaponDamage = {
+    '225': {
+        'weapon_phys': 2.35,
+        'weapon_magic': 2.35,
+        'weapon_fire': 2.35,
+        'weapon_lightning': 2.35,
+        'weapon_holy': 2.35,
+    }
+}
+
+ReinforceParamWeaponScaling = {
+    '225': {
+        'scaling_str': 1.3,
+        'scaling_dex': 2.8,
+        'scaling_int': 1.8,
+        'scaling_fai': 1.8,
+        'scaling_arc': 1.8,
+    }
+}
+
+#weapon upgrades component
+def base_damage_reinforcement(weapon_id, reinforce_type_id, scaling_multiplier):
+    reinforce_base_damage = {}
+
+    for dmg_type, val in WeaponDamage[dmg_type].items():
+       if val is 0:
+           reinforce_base_damage[dmg_type] = 0
+       else:
+           tmp_WeaponDamage = WeaponDamage[str(weapon_id)][dmg_type].copy()
+           tmp_ScalingModifier = ReinforceParamWeaponDamage[str(reinforce_type_id)][scaling_multiplier].copy()
+           for i in tmp_WeaponDamage:
+               output = [item1 * item2 for item1, item2 in zip(tmp_WeaponDamage, tmp_ScalingModifier)]
+               reinforce_base_damage[dmg_type] = output
+
+
+
+#weapon inherent scaling component
+def base_scaling_reinforcement(weapon_id, reinforce_type_id, scaling_multiplier):
+    reinforce_base_scaling = {}
+
+    for char_attr, val in WeaponScaling[char_attr].items():
+       if val is 0:
+           reinforce_base_scaling[char_attr] = 0
+       else:
+           tmp_WeaponScaling = WeaponScaling[str(weapon_id)][char_attr].copy()
+           tmp_ScalingModifier = ReinforceParamWeaponScaling[str(reinforce_type_id)][scaling_multiplier].copy()
+           for i in tmp_WeaponScaling:
+               output = [item1 * item2 for item1, item2 in zip(tmp_WeaponScaling, tmp_ScalingModifier)]
+               reinforce_base_scaling[char_attr] = output
+
+
+
+
+#player scaling / softcap component
 def walk_weapons(attack_element_correct_id, weapon_id, player):
-    output_values = {}
+    player_scaling_multiplier = {}
 
     for char_attr in AttackElementCorrectParam[attack_element_correct_id]:
         for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
@@ -627,14 +704,14 @@ def walk_weapons(attack_element_correct_id, weapon_id, player):
                 else:
                     growth = 1 - ((1 - ratio) ** abs(CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1]))
                 output = CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx - 1] + ((CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['grow'][idx - 1]) * growth)
-                if dmg_type in output_values.keys():
-                    output_values[dmg_type] += output
+                if dmg_type in player_scaling_multiplier.keys():
+                    player_scaling_multiplier[dmg_type] += output
                 else:
-                    output_values[dmg_type] = output
+                    player_scaling_multiplier[dmg_type] = output
             else:
-                if dmg_type not in output_values.keys():
-                    output_values[dmg_type] = 0
-    return output_values
+                if dmg_type not in player_scaling_multiplier.keys():
+                    player_scaling_multiplier[dmg_type] = 0
+    return player_scaling_multiplier
 
 """
 output_values will look like this when it's full:
@@ -653,21 +730,31 @@ output_values will look like this when it's full:
 }
 """
 
-# TODO: More Math
-def outputs_to_final_values(output_values, weapon_dmg):
-    # divide the values from the input dict by 100
+    
     # and then multiply them by the weapon dmg
-    pass
 
 ###
 
 #Putting it together
 def main():
-    final_phys_damage = scaled_phys_weapon + str_output + dex_output + int_output + fai_output + arc_output
-    final_magic_damage = scaled_magic_weapon + str_output + dex_output + int_output + fai_output + arc_output
-    final_fire_damage = scaled_fire_weapon + str_output + dex_output + int_output + fai_output + arc_output
-    final_lightning_damage = scaled_lightning_weapon + str_output + dex_output + int_output + fai_output + arc_output
-    final_holy_damage = scaled_holy_weapon + str_output + dex_output + int_output + fai_output + arc_output
+  damage_type_ar = {}
+  
+  for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
+      if val:
+        final_damage = reinforce_base_damage[dmg_type] * (reinforce_base_scaling[char_attr] / 100) * player_scaling_multiplier[char_attr]
+      else: 
+          damage_type_ar[dmg_type] = 0
+
+
+
+
+      final_magic_damage = scaled_magic_weapon 
+      final_fire_damage = scaled_fire_weapon 
+      final_lightning_damage = scaled_lightning_weapon 
+      final_holy_damage = scaled_holy_weapon 
+
+
+
 
     attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
     return attack_rating

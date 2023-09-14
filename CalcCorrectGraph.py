@@ -1,0 +1,8 @@
+CalcCorrectGraph = {
+    '0': {'stat0': 1, 'stat1': 18, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 25, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling default
+    '1': {'stat0': 1, 'stat1': 20, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 35, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling heavy
+    '2': {'stat0': 1, 'stat1': 20, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 35, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling keen
+    '4': {'stat0': 1, 'stat1': 20, 'stat2': 50, 'stat3': 80, 'stat4': 99, 'grow0': 0, 'grow1': 40, 'grow2': 80, 'grow3': 95, 'grow4': 100, 'exponent0': 1, 'exponent1': 1, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling elemental (magic, fire, lightning, holy)
+    '7': {'stat0': 1, 'stat1': 20, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 35, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling occult
+    '8': {'stat0': 1, 'stat1': 16, 'stat2': 60, 'stat3': 80, 'stat4': 150, 'grow0': 0, 'grow1': 25, 'grow2': 75, 'grow3': 90, 'grow4': 110, 'exponent0': 1.2, 'exponent1': -1.2, 'exponent2': 1, 'exponent3': 1, 'exponent4': 1}, #weapon scaling quality
+}
