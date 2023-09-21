@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 weapon_name = "Clayman's Keen Harpoon +25"
 weapon_id = 16030200
 reinforce_type_id = 225
