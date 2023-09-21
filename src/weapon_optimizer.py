@@ -757,16 +757,16 @@ def main():
 
 
 
-      final_magic_damage = scaled_magic_weapon
-      final_fire_damage = scaled_fire_weapon
-      final_lightning_damage = scaled_lightning_weapon
-      final_holy_damage = scaled_holy_weapon
+      ##final_magic_damage = scaled_magic_weapon
+      ##final_fire_damage = scaled_fire_weapon
+     ##final_lightning_damage = scaled_lightning_weapon
+      ##final_holy_damage = scaled_holy_weapon
 
 
 
 
-      attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
-      return attack_rating
+      ##attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
+      ##return attack_rating
 
 if __name__ == '__main__':
     main()
