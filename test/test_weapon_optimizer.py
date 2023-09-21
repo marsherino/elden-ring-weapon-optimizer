@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import pytest
 from weapon_optimizer import base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier, combined_calc
 
@@ -83,4 +84,5 @@ def test_combined_calc():
     assert result['fire'] == 0
     assert result['lightning'] == 0
     assert result['holy'] == 0
+
 
