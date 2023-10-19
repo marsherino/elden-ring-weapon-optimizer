@@ -78,10 +78,6 @@ def test_combined_calc():
     print(f"bsr = {bsr}")
     result = combined_calc(bdr, bsr, psm)
 
-    assert result['phys'] == 199
-    assert int(result['magic']) == 32
-    assert result['fire'] == 0
-    assert result['lightning'] == 0
-    assert result['holy'] == 0
+    assert result == 575
 
 

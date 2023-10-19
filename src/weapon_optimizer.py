@@ -736,13 +736,13 @@ output_values will look like this when it's full:
 ###
 
 def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier):
-    result = {}
+    result = []
     for dmg_type in DMG_TYPES:
         dmg_type_val = 0
         for char_attr in PLAYER_STATS:
             dmg_type_val += (base_damage_reinforcement[dmg_type] * base_scaling_reinforcement[char_attr] * player_scaling_multiplier[char_attr][dmg_type])
-        result[dmg_type] = dmg_type_val
-    return result
+        result.append(dmg_type_val)
+    return sum(result)
 
 #Putting it together
 def main():
