@@ -692,7 +692,7 @@ def player_scaling_multiplier(attack_element_correct_id, weapon_id, player):
                 idx = tmp.index(player[char_attr])
                 ratio = (player[char_attr] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1]) / (CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1])
 
-                if CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1] < 0:
+                if CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1] > 0:
                     growth = ratio ** CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1]
                 else:
                     growth = 1 - ((1 - ratio) ** abs(CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1]))
@@ -738,35 +738,13 @@ output_values will look like this when it's full:
 def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier):
     result = []
     for dmg_type in DMG_TYPES:
-        dmg_type_val = 0
         for char_attr in PLAYER_STATS:
-            dmg_type_val += (base_damage_reinforcement[dmg_type] * base_scaling_reinforcement[char_attr] * player_scaling_multiplier[char_attr][dmg_type])
-        result.append(dmg_type_val)
-    return sum(result)
+            dmg_type_val = (base_damage_reinforcement[dmg_type] * base_scaling_reinforcement[char_attr] * player_scaling_multiplier[char_attr][dmg_type])
+            result.append(dmg_type_val)
+        result.append(base_damage_reinforcement[dmg_type])
+    print(result)
+    return int(sum(result))
 
-#Putting it together
-def main():
-  damage_type_ar = {}
-
-  for dmg_type, val in AttackElementCorrectParam[attack_element_correct_id][char_attr].items():
-      if val:
-        final_damage = reinforce_base_damage[dmg_type] * (reinforce_base_scaling[char_attr] / 100) * player_scaling_multiplier[char_attr]
-      else:
-          damage_type_ar[dmg_type] = 0
-
-
-
-
-      ##final_magic_damage = scaled_magic_weapon
-      ##final_fire_damage = scaled_fire_weapon
-     ##final_lightning_damage = scaled_lightning_weapon
-      ##final_holy_damage = scaled_holy_weapon
-
-
-
-
-      ##attack_rating = final_phys_damage + final_magic_damage + final_fire_damage + final_lightning_damage + final_holy_damage
-      ##return attack_rating
 
 if __name__ == '__main__':
     main()
