@@ -18,7 +18,7 @@ def get_weapon_damage():
 
 def get_weapon_scaling():
   WeaponScaling = {}
-  with open('elden_ring_raw_data.csv', 'r') as f:
+  with open('elden_ring_reinforce_param_weapon.csv', 'r') as f:
     csvreader = csv.reader(f)
     for row in csvreader:
       WeaponScaling[row[0]] = {
@@ -97,3 +97,9 @@ def get_reinforce_param_weapon_scaling():
             'weapon_lightning': int(paramreader[ParamRow][10]),
             'weapon_holy': int(paramreader[ParamRow][11]),
             }
+          
+def get_attack_element_correct_id():
+  with open('elden_ring_calc_correct_id.csv', 'r') as f:
+    csvreader = csv.reader(f)
+    for row in csvreader:
+      attack_element_correct_id = row[26]

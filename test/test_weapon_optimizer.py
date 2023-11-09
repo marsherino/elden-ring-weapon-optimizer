@@ -1,5 +1,5 @@
 import pytest
-from weapon_optimizer import base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier, combined_calc
+from weapon_optimizer_v2 import base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier, combined_calc
 
 def test_base_damage_reinforcement():
     weapon_id = '16030200'
