@@ -589,7 +589,7 @@ def base_damage_reinforcement(weapon_id, reinforce_type_id):
     reinforce_base_damage = {}
 
     for key in list(WeaponDamage[weapon_id].keys()):
-      reinforce_base_damage[key] = WeaponDamage[weapon_id][key] * ReinforceParamWeaponDamage[reinforce_type_id]["weapon_" + key]
+      reinforce_base_damage[key] = WeaponDamage[str(weapon_id)][key] * ReinforceParamWeaponDamage[str(reinforce_type_id)]["weapon_" + key]
 
     return reinforce_base_damage
 
@@ -599,7 +599,7 @@ def base_scaling_reinforcement(weapon_id, reinforce_type_id):
     reinforce_base_scaling = {}
 
     for key in list(WeaponScaling[weapon_id].keys()):
-      reinforce_base_scaling[key] = (WeaponScaling[weapon_id][key] * ReinforceParamWeaponScaling[reinforce_type_id]["scaling_" + key]) / 100
+      reinforce_base_scaling[key] = (WeaponScaling[str(weapon_id)][key] * ReinforceParamWeaponScaling[str(reinforce_type_id)]["scaling_" + key]) / 100
 
     return reinforce_base_scaling
 

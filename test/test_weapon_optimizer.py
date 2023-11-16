@@ -69,7 +69,7 @@ def test_combined_calc():
     weapon_id = '16030200'
     reinforce_type_id = '225'
 
-    psm = player_scaling_multiplier(attack_element_correct_id, weapon_id, player)
+    psm = player_scaling_multiplier(weapon_id, player)
     bdr = base_damage_reinforcement(weapon_id, reinforce_type_id)
     bsr = base_scaling_reinforcement(weapon_id, reinforce_type_id)
 
