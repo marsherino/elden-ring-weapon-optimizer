@@ -1,4 +1,4 @@
-from data_puller import get_weapon_damage, get_weapon_calc_correct_id, get_reinforce_param_weapon_damage, get_reinforce_param_weapon_scaling, get_weapon_scaling, get_attack_element_correct_id
+from data_puller import get_weapon_damage, get_weapon_calc_correct_id, get_reinforce_param_weapon_damage, get_reinforce_param_weapon_scaling, get_weapon_scaling, get_attack_element_correct_id, get_weapon_id_to_reinforce_type_id, get_weapon_names_map
 
 PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
 DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
@@ -583,10 +583,13 @@ CALC_CORRECT_DICT = get_weapon_calc_correct_id()
 ReinforceParamWeaponDamage = get_reinforce_param_weapon_damage()
 ReinforceParamWeaponScaling = get_reinforce_param_weapon_scaling()
 attack_element_correct_id_dict = get_attack_element_correct_id()
+weapon_id_to_reinforce_type_id = get_weapon_id_to_reinforce_type_id()
+weapon_names_map = get_weapon_names_map()
 
 #weapon upgrades component
-def base_damage_reinforcement(weapon_id, reinforce_type_id):
+def base_damage_reinforcement(weapon_id):
     reinforce_base_damage = {}
+    reinforce_type_id = weapon_id_to_reinforce_type_id[weapon_id]
 
     for key in list(WeaponDamage[weapon_id].keys()):
       reinforce_base_damage[key] = WeaponDamage[str(weapon_id)][key] * ReinforceParamWeaponDamage[str(reinforce_type_id)]["weapon_" + key]
@@ -595,8 +598,9 @@ def base_damage_reinforcement(weapon_id, reinforce_type_id):
 
 
 #weapon inherent scaling component
-def base_scaling_reinforcement(weapon_id, reinforce_type_id):
+def base_scaling_reinforcement(weapon_id):
     reinforce_base_scaling = {}
+    reinforce_type_id = weapon_id_to_reinforce_type_id[weapon_id]
 
     for key in list(WeaponScaling[weapon_id].keys()):
       reinforce_base_scaling[key] = (WeaponScaling[str(weapon_id)][key] * ReinforceParamWeaponScaling[str(reinforce_type_id)]["scaling_" + key]) / 100
@@ -674,6 +678,27 @@ def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_
     print(result)
     return int(sum(result))
 
+
+"""
+def get_player_stats():
+    # maybe start using input() prompts to get this
+    # we can make it more complex later
+
+def main():
+    player_stats = get_player_stats()
+
+    comp = {}
+    for weapon_id in WeaponDamage.keys():
+        bdr = base_damage_reinforcement(weapon_id)
+        bsr = base_scaling_reinforcement(weapon_id)
+        psm = player_scaling_multiplier(weapon_id, player)
+        ar = combined_calc(bdr, bsr, psm)
+        comp[weapon_id] = ar
+
+    highest_dmg = max(comp.values())
+    best_weapons = [k for k, v in comp if v == highest_dmg]
+    # for weapon in best_weapons, print weapon_names_map[weapon]
+"""
 
 if __name__ == '__main__':
     main()

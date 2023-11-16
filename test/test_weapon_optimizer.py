@@ -3,9 +3,8 @@ from weapon_optimizer_v2 import base_damage_reinforcement, base_scaling_reinforc
 
 def test_base_damage_reinforcement():
     weapon_id = '16030200'
-    reinforce_type_id = '225'
 
-    result = base_damage_reinforcement(weapon_id, reinforce_type_id)
+    result = base_damage_reinforcement(weapon_id)
 
     assert int(result['phys']) == 223
     assert int(result['magic']) == 119
@@ -15,9 +14,8 @@ def test_base_damage_reinforcement():
 
 def test_base_scaling_reinforcement():
     weapon_id = '16030200'
-    reinforce_type_id = '225'
 
-    result = base_scaling_reinforcement(weapon_id, reinforce_type_id)
+    result = base_scaling_reinforcement(weapon_id)
 
     assert round(result['str'], 3) == 0.247
     assert round(result['dex'], 2) == 1.26
@@ -67,11 +65,10 @@ def test_combined_calc():
               'arc': 10,}
     attack_element_correct_id = '10000'
     weapon_id = '16030200'
-    reinforce_type_id = '225'
 
     psm = player_scaling_multiplier(weapon_id, player)
-    bdr = base_damage_reinforcement(weapon_id, reinforce_type_id)
-    bsr = base_scaling_reinforcement(weapon_id, reinforce_type_id)
+    bdr = base_damage_reinforcement(weapon_id)
+    bsr = base_scaling_reinforcement(weapon_id)
 
     print(f"psm = {psm}")
     print(f"bdr = {bdr}")
