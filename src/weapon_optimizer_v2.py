@@ -582,8 +582,7 @@ WeaponScaling = get_weapon_scaling()
 CALC_CORRECT_DICT = get_weapon_calc_correct_id()
 ReinforceParamWeaponDamage = get_reinforce_param_weapon_damage()
 ReinforceParamWeaponScaling = get_reinforce_param_weapon_scaling()
-attack_element_correct_id = get_attack_element_correct_id()
-
+attack_element_correct_id_dict = get_attack_element_correct_id()
 
 #weapon upgrades component
 def base_damage_reinforcement(weapon_id, reinforce_type_id):
@@ -606,7 +605,8 @@ def base_scaling_reinforcement(weapon_id, reinforce_type_id):
 
 
 #player scaling / softcap component
-def player_scaling_multiplier(attack_element_correct_id, weapon_id, player):
+def player_scaling_multiplier(weapon_id, player):
+    attack_element_correct_id = attack_element_correct_id_dict[weapon_id]
     result = {}
 
     for char_attr in AttackElementCorrectParam[attack_element_correct_id]:

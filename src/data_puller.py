@@ -15,6 +15,7 @@ def get_weapon_damage():
         'lightning': int(row[6]),
         'holy': int(row[7])
         }
+  return WeaponDamage
 
 def get_weapon_scaling():
   WeaponScaling = {}
@@ -28,6 +29,7 @@ def get_weapon_scaling():
         'fai': int(row[12]),
         'arc': int(row[13])
         }
+  return WeaponScaling
 
 def get_weapon_calc_correct_id():
   CALC_CORRECT_DICT = {}
@@ -41,6 +43,7 @@ def get_weapon_calc_correct_id():
         'lightning': int(row[5]),
         'holy': int(row[6])
         }
+    return CALC_CORRECT_DICT
 
 def get_reinforce_param_weapon_damage():
   ReinforceParamWeaponDamage = {}
@@ -49,7 +52,7 @@ def get_reinforce_param_weapon_damage():
       csvreader = csv.reader(f)
       paramreader = csv.reader(g)
       for row in csvreader:
-        if 1999 < [int(row[2])] < 3000:
+        if 1999 < int(row[2]) < 3000:
           ParamRow = int(row[2])+10
           paramreader = list(paramreader)
           ReinforceParamWeaponDamage[ParamRow] = {
@@ -69,6 +72,7 @@ def get_reinforce_param_weapon_damage():
             'weapon_lightning': int(paramreader[ParamRow][4]),
             'weapon_holy': int(paramreader[ParamRow][5]),
             }
+    return ReinforceParamWeaponDamage
 
 def get_reinforce_param_weapon_scaling():
   ReinforceParamWeaponScaling = {}
@@ -77,7 +81,7 @@ def get_reinforce_param_weapon_scaling():
       csvreader = csv.reader(f)
       paramreader = csv.reader(g)
       for row in csvreader:
-        if 1999 < [int(row[2])] < 3000:
+        if 1999 < int(row[2]) < 3000:
           ParamRow = int(row[2])+10
           paramreader = list(paramreader)
           ReinforceParamWeaponScaling[ParamRow] = {
@@ -97,9 +101,12 @@ def get_reinforce_param_weapon_scaling():
             'weapon_lightning': int(paramreader[ParamRow][10]),
             'weapon_holy': int(paramreader[ParamRow][11]),
             }
+    return ReinforceParamWeaponScaling
           
 def get_attack_element_correct_id():
-  with open('elden_ring_calc_correct_id.csv', 'r') as f:
+  attack_element_correct_id = {}
+  with open('elden_ring_raw_data.csv', 'r') as f:
     csvreader = csv.reader(f)
     for row in csvreader:
-      attack_element_correct_id = row[26]
+      attack_element_correct_id[row[0]] = row[26]
+  return attack_element_correct_id

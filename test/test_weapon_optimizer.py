@@ -50,7 +50,7 @@ def test_player_scaling_multiplier():
         'holy': 0,
     }
 
-    result = player_scaling_multiplier(attack_element_correct_id, weapon_id, player)
+    result = player_scaling_multiplier(weapon_id, player)
     print(result)
 
     #assert result['phys'] == 114.09621961766977
