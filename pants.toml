@@ -17,7 +17,7 @@ search_path = [
 ]
 
 [source]
-root_patterns = ["src/", "test/"]
+root_patterns = ["src/", "test/", "static/"]
 
 [anonymous-telemetry]
 enabled = false
