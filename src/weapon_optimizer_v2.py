@@ -684,6 +684,9 @@ def main():
 
     comp = {}
     for weapon_id in WeaponDamage.keys():
+        # Skip weapons whose CalcCorrectGraph values are greater than 8
+        if any([(int(x) > 8) for x in CALC_CORRECT_DICT[str(weapon_id)].values()]):
+            continue
         bdr = base_damage_reinforcement(weapon_id)
         bsr = base_scaling_reinforcement(weapon_id)
         psm = player_scaling_multiplier(weapon_id, player)
