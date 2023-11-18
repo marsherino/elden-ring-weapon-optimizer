@@ -1,4 +1,4 @@
-from data_puller import get_weapon_damage, get_weapon_calc_correct_id, get_reinforce_param_weapon_damage, get_reinforce_param_weapon_scaling, get_weapon_scaling, get_attack_element_correct_id, get_weapon_id_to_reinforce_type_id, get_weapon_names_map
+from data_puller import *
 
 PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
 DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
@@ -577,14 +577,9 @@ AttackElementCorrectParam = {
             }#Frenzied Flame Seal
         }
 
-WeaponDamage = get_weapon_damage()
-WeaponScaling = get_weapon_scaling()
+ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, weapon_id_to_reinforce_type_id = get_reinforce_data()
+WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict = get_raw_data()
 CALC_CORRECT_DICT = get_weapon_calc_correct_id()
-ReinforceParamWeaponDamage = get_reinforce_param_weapon_damage()
-ReinforceParamWeaponScaling = get_reinforce_param_weapon_scaling()
-attack_element_correct_id_dict = get_attack_element_correct_id()
-weapon_id_to_reinforce_type_id = get_weapon_id_to_reinforce_type_id()
-weapon_names_map = get_weapon_names_map()
 
 #weapon upgrades component
 def base_damage_reinforcement(weapon_id):

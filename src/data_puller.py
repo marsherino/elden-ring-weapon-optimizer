@@ -5,47 +5,37 @@ import csv
 ### goal: get data in the same format that it's in in the weapon_optimizer file lns. 608-656
 ### rename the csv files to something normal - this saves a lot of effort
 
-def get_weapon_damage():
-  WeaponDamage = {}
+DOES_NOT_SCALE_UP = [3000]
+ONLY_GOES_TO_FIVE = [4500, 4600]
+ONLY_GOES_TO_TEN = [2200, 2400, 2500, 2600, 2700, 2800, 3200, 3300, 4000, 4100, 6100, 6200, 6300, 7000, 8300, 8500, 9000]
+
+def get_raw_data():
+  weapon_damage = {}
+  weapon_names_map = {}
+  weapon_scaling = {}
+  attack_element_correct_id = {}
   path = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
   with open(path, 'r') as f:
     csvreader = csv.reader(f)
     next(csvreader)
     for row in csvreader:
-      WeaponDamage[row[0]] = {
+      weapon_damage[row[0]] = {
         'phys': int(row[3]),
         'magic': int(row[4]),
         'fire': int(row[5]),
         'lightning': int(row[6]),
         'holy': int(row[7])
         }
-  return WeaponDamage
-
-def get_weapon_names_map():
-  ret = {}
-  path = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
-  with open(path, 'r') as f:
-    csvreader = csv.reader(f)
-    next(csvreader)
-    for row in csvreader:
-      ret[row[0]] = row[1]
-  return ret
-
-def get_weapon_scaling():
-  WeaponScaling = {}
-  path = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
-  with open(path, 'r') as f:
-    csvreader = csv.reader(f)
-    next(csvreader)
-    for row in csvreader:
-      WeaponScaling[row[0]] = {
+      weapon_scaling[row[0]] = {
         'str': float(row[9]),
         'dex': float(row[10]),
         'int': float(row[11]),
         'fai': float(row[12]),
         'arc': float(row[13])
         }
-  return WeaponScaling
+      weapon_names_map[row[0]] = row[1]
+      attack_element_correct_id[row[0]] = row[26]
+  return weapon_damage, weapon_names_map, weapon_scaling, attack_element_correct_id
 
 def get_weapon_calc_correct_id():
   CALC_CORRECT_DICT = {}
@@ -63,8 +53,10 @@ def get_weapon_calc_correct_id():
         }
     return CALC_CORRECT_DICT
 
-def get_reinforce_param_weapon_damage():
+def get_reinforce_data():
   ReinforceParamWeaponDamage = {}
+  ReinforceParamWeaponScaling = {}
+  reinforce_type_id = {}
   fpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
   gpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_reinforce_param_weapon.csv"))
   with open(fpath, 'r') as f:
@@ -75,10 +67,17 @@ def get_reinforce_param_weapon_damage():
       params_list = list(paramreader)
       params_list = params_list[1:]
       for row in csvreader:
-        if 1999 < int(row[2]) < 3000:
+        if int(row[2]) in ONLY_GOES_TO_TEN:
           ParamRow = int(row[2])+10
+        elif int(row[2]) in ONLY_GOES_TO_FIVE:
+          ParamRow = int(row[2])+5
+        elif int(row[2]) in DOES_NOT_SCALE_UP:
+          ParamRow = int(row[2])
         else:
           ParamRow = int(row[2])+25
+
+        reinforce_type_id[row[0]] = ParamRow
+
         for param_row in params_list:
           if int(param_row[0]) == ParamRow:
             ReinforceParamWeaponDamage[str(ParamRow)] = {
@@ -88,27 +87,6 @@ def get_reinforce_param_weapon_damage():
               'weapon_lightning': float(param_row[4]),
               'weapon_holy': float(param_row[5]),
             }
-
-    return ReinforceParamWeaponDamage
-
-def get_reinforce_param_weapon_scaling():
-  ReinforceParamWeaponScaling = {}
-  fpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
-  gpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_reinforce_param_weapon.csv"))
-  with open(fpath, 'r') as f:
-    with open(gpath, 'r') as g:
-      csvreader = csv.reader(f)
-      next(csvreader)
-      paramreader = csv.reader(g)
-      params_list = list(paramreader)
-      params_list = params_list[1:]
-      for row in csvreader:
-        if 1999 < int(row[2]) < 3000:
-          ParamRow = int(row[2])+10
-        else:
-          ParamRow = int(row[2])+25
-        for param_row in params_list:
-          if int(param_row[0]) == ParamRow:
             ReinforceParamWeaponScaling[str(ParamRow)] = {
               'scaling_str': float(param_row[7]),
               'scaling_dex': float(param_row[8]),
@@ -116,33 +94,6 @@ def get_reinforce_param_weapon_scaling():
               'scaling_fai': float(param_row[10]),
               'scaling_arc': float(param_row[11]),
             }
-    return ReinforceParamWeaponScaling
 
-def get_weapon_id_to_reinforce_type_id():
-  ret = {}
-  fpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
-  gpath = normpath(os.path.join(os.getcwd(), "static/elden_ring_reinforce_param_weapon.csv"))
-  with open(fpath, 'r') as f:
-    with open(gpath, 'r') as g:
-      csvreader = csv.reader(f)
-      next(csvreader)
-      paramreader = csv.reader(g)
-      params_list = list(paramreader)
-      params_list = params_list[1:]
-      for row in csvreader:
-        if 1999 < int(row[2]) < 3000:
-          ParamRow = int(row[2])+10
-        else:
-          ParamRow = int(row[2])+25
-        ret[row[0]] = ParamRow
-  return ret
+    return ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, reinforce_type_id
 
-def get_attack_element_correct_id():
-  attack_element_correct_id = {}
-  path = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
-  with open(path, 'r') as f:
-    csvreader = csv.reader(f)
-    next(csvreader)
-    for row in csvreader:
-      attack_element_correct_id[row[0]] = row[26]
-  return attack_element_correct_id
