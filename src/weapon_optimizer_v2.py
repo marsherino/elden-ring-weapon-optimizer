@@ -7,15 +7,7 @@ import re
 PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
 DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
 
-player_stats = {
-    'str': None,
-    'dex': None,
-    'int': None,
-    'fai': None,
-    'arc': None,
-}
 
-player_stats = get_player_stats()
 ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, weapon_id_to_reinforce_type_id = get_reinforce_data()
 WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict = get_raw_data()
 CALC_CORRECT_DICT = get_weapon_calc_correct_id()
@@ -98,10 +90,6 @@ output_values will look like this when it's full:
 """
 
 
-    # and then multiply them by the weapon dmg
-
-###
-
 def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_scaling_multiplier):
     result = []
     for dmg_type in DMG_TYPES:
@@ -111,12 +99,6 @@ def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_
         result.append(base_damage_reinforcement[dmg_type])
     print(result)
     return int(sum(result))
-
-
-"""
-def get_player_stats():
-    # maybe start using input() prompts to get this
-    # we can make it more complex later
 
 def main():
     player_stats = get_player_stats()
@@ -134,8 +116,8 @@ def main():
 
     highest_dmg = max(comp.values())
     best_weapons = [k for k, v in comp if v == highest_dmg]
-    # for weapon in best_weapons, print weapon_names_map[weapon]
-"""
-
+    for weapon in best_weapons:
+        print(weapon_names_map[str(weapon)])
+        
 if __name__ == '__main__':
     main()

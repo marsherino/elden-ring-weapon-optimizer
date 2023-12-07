@@ -1,6 +1,11 @@
-
-
 def get_player_stats():
+    player_stats = {
+    'str': None,
+    'dex': None,
+    'int': None,
+    'fai': None,
+    'arc': None,
+}
     flag_str = True
     input_value_str = None
     while flag_str:
@@ -80,3 +85,5 @@ def get_player_stats():
     else:
         flag = False
     player_stats['arc'] = int(input_value_arc)
+
+    return player_stats
