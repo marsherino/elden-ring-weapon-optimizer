@@ -106,7 +106,7 @@ def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_
     return int(sum(result))
 
 def main():
-    player_stats = get_player_stats()
+    player_stats = get_saved_player_stats() or get_player_stats()
 
     comp = {}
     for weapon_id in WeaponDamage.keys():

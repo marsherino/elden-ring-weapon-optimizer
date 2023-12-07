@@ -1,4 +1,23 @@
 import re
+import json
+
+def get_saved_player_stats():
+    save_json_flag = True
+    while save_json_flag:
+      input_save_json = input("Do you want to load an existing stat block file? (.eldenringplayerstats.json) (Y/N): ").strip()
+      if not (input_save_json.upper() == 'Y' or input_save_json.upper() == 'N'):
+          print("Please enter a valid response.")
+      elif input_save_json.upper() == 'Y':
+          try:
+              with open('.eldenringplayerstats.json', 'r', encoding='utf-8') as f:
+                result = json.loads(f.read())
+                return result
+          except FileNotFoundError:
+              print("Couldn't find .eldenringplayerstats.json in the directory you're running this in! Maybe enter those details again if you don't mind...")
+              return False
+      else:
+          save_json_flag = False
+          return False
 
 def get_player_stats():
     player_stats = {
@@ -7,7 +26,8 @@ def get_player_stats():
     'int': None,
     'fai': None,
     'arc': None,
-}
+    }
+
     flag_str = True
     while flag_str:
         input_str = input("Please enter your STR. This should be a value between 1 and 99: ").strip()
@@ -79,5 +99,18 @@ def get_player_stats():
         else:
             flag_arc = False
     player_stats['arc'] = int(input_arc)
+
+    save_json_flag = True
+    while save_json_flag:
+      input_save_json = input("Do you want to save these player stats to a local file that can be loaded next time? (.eldenringplayerstats.json) (Y/N): ").strip()
+      if not (input_save_json.upper() == 'Y' or input_save_json.upper() == 'N'):
+          print("Please enter a valid response.")
+      elif input_save_json.upper() == 'Y':
+          with open('.eldenringplayerstats.json', 'w', encoding='utf-8') as f:
+              json.dump(player_stats, f, ensure_ascii=False, indent=4)
+          save_json_flag = False
+      else:
+          save_json_flag = False
+    
 
     return player_stats
