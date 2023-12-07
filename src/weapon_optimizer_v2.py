@@ -2,7 +2,6 @@ from data_puller import *
 from AttackElementCorrectParam import AttackElementCorrectParam
 from CalcCorrectGraph import CalcCorrectGraph
 from player_stats import *
-import re
 
 PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
 DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
@@ -97,7 +96,6 @@ def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_
             dmg_type_val = (base_damage_reinforcement[dmg_type] * base_scaling_reinforcement[char_attr] * player_scaling_multiplier[char_attr][dmg_type])
             result.append(dmg_type_val)
         result.append(base_damage_reinforcement[dmg_type])
-    print(result)
     return int(sum(result))
 
 def main():
@@ -110,12 +108,17 @@ def main():
             continue
         bdr = base_damage_reinforcement(weapon_id)
         bsr = base_scaling_reinforcement(weapon_id)
-        psm = player_scaling_multiplier(weapon_id, player)
+        psm = player_scaling_multiplier(weapon_id, player_stats)
         ar = combined_calc(bdr, bsr, psm)
         comp[weapon_id] = ar
 
     highest_dmg = max(comp.values())
-    best_weapons = [k for k, v in comp if v == highest_dmg]
+    
+    best_weapons = []
+    for k,v in comp.items():
+        if v == highest_dmg:
+            best_weapons.append(k)
+
     for weapon in best_weapons:
         print(weapon_names_map[str(weapon)])
         
