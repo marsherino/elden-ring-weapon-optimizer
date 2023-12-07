@@ -44,10 +44,17 @@ def player_scaling_multiplier(weapon_id, player):
             if val:
                 # TODO: Instead of calc_correct_id_phys, we need to make some kind of dictionary called something like calc_correct_id that has another nested dict inside it; the nested dict should have keys that are damage types and values that are the numbers for a specific weapon. You might need to essentially parse the whole spreadsheet to get this and then filter in only the relevant numbers
                 tmp = CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'].copy()
+                orig_len = len(tmp)
                 tmp.append(player[char_attr])
                 tmp = sorted(tmp)
                 # tmp now contains the player attribute, along with all of the values from CalcCorrectGraph's "stat" block for this id
                 idx = tmp.index(player[char_attr])
+                
+                # In case our player's value is the largest thing in this array, its index will be out of range when we check after my weird sort maneuver
+                # So therefore just pick the biggest value
+                if idx == orig_len:
+                    idx -= 1
+                
                 ratio = (player[char_attr] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1]) / (CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx] - CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['stat'][idx - 1])
 
                 if CalcCorrectGraph[str(CALC_CORRECT_DICT[str(weapon_id)][dmg_type])]['exponent'][idx - 1] > 0:

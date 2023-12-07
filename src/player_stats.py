@@ -26,7 +26,7 @@ def get_player_stats():
       if not (input_two_handed.upper() == 'Y' or input_two_handed.upper() == 'N'):
           print("Please enter a valid response.")
       elif input_two_handed.upper() == 'Y':
-          player_stats['str'] = base_player_str * 1.5
+          player_stats['str'] = int(base_player_str * 1.5)
           two_handed_flag = False
       else:
           player_stats['str'] = base_player_str * 1
