@@ -44,7 +44,7 @@ def get_raw_data():
       }
       weapon_names_map[row[0]] = row[1]
       attack_element_correct_id[row[0]] = row[26]
-      weapon_weight[row[0]] = int(row[37])
+      weapon_weight[row[0]] = row[37]
   return weapon_damage, weapon_names_map, weapon_scaling, attack_element_correct_id, weapon_weight, weapon_minimums
 
 def get_weapon_calc_correct_id():

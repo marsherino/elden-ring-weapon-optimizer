@@ -119,17 +119,22 @@ def main():
         ar = combined_calc(bdr, bsr, psm)
         comp[weapon_id] = ar
 
-    comp_weight_adjusted = {k: v for k, v in comp.items() if weapon_weight[str(weapon_id)] <= player_stats['wgt']}
-
-    for weapon_id in comp_weight_adjusted.keys():
+    delete = []
+    for weapon_id in comp:
+        if float(weapon_weight[str(weapon_id)]) > float(player_stats['wgt']):
+            delete.append(weapon_id)
         for char_attr in PLAYER_STATS:
-            if weapon_minimums[char_attr] > player_stats[char_attr]:
-                del comp_weight_adjusted[weapon_id]
+            if weapon_minimums[str(weapon_id)][char_attr] > player_stats[char_attr]:
+                delete.append(weapon_id)
+    
+    delete = list(set(delete))
+    for i in delete:
+        del comp[i]
 
-    highest_dmg = max(comp_weight_adjusted.values())
+    highest_dmg = max(comp.values())
     
     best_weapons = []
-    for k,v in comp_weight_adjusted.items():
+    for k,v in comp.items():
         if v == highest_dmg:
             best_weapons.append(k)
 
