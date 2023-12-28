@@ -26,6 +26,7 @@ def get_player_stats():
     'int': None,
     'fai': None,
     'arc': None,
+    'wgt': None,
     }
 
     flag_str = True
@@ -99,6 +100,16 @@ def get_player_stats():
         else:
             flag_arc = False
     player_stats['arc'] = int(input_arc)
+
+    flag_wgt = True
+    while flag_wgt:
+        input_wgt = input("Please enter the maximum weight you want to invest in your weapon. To check all weapons without restriction, please enter 100: ").strip()
+        match_val = re.match("[-+]?\\d+$", input_wgt)
+        if match_val is None:
+            print("Please enter a valid integer.")
+        else:
+            flag_wgt = False
+    player_stats['wgt'] = int(input_wgt)
 
     save_json_flag = True
     while save_json_flag:

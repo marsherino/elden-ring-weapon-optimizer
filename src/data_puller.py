@@ -14,6 +14,8 @@ def get_raw_data():
   weapon_names_map = {}
   weapon_scaling = {}
   attack_element_correct_id = {}
+  weapon_minimums = {}
+  weapon_weight = {}
   path = normpath(os.path.join(os.getcwd(), "static/elden_ring_raw_data.csv"))
   with open(path, 'r') as f:
     csvreader = csv.reader(f)
@@ -33,9 +35,17 @@ def get_raw_data():
         'fai': float(row[12]),
         'arc': float(row[13])
         }
+      weapon_minimums[row[0]] = {
+        'str': int(row[29]),
+        'dex': int(row[30]),
+        'int': int(row[31]),
+        'fai': int(row[32]),
+        'arc': int(row[33]),
+      }
       weapon_names_map[row[0]] = row[1]
       attack_element_correct_id[row[0]] = row[26]
-  return weapon_damage, weapon_names_map, weapon_scaling, attack_element_correct_id
+      weapon_weight[row[0]] = int(row[37])
+  return weapon_damage, weapon_names_map, weapon_scaling, attack_element_correct_id, weapon_weight, weapon_minimums
 
 def get_weapon_calc_correct_id():
   CALC_CORRECT_DICT = {}

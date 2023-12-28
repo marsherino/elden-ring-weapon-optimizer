@@ -8,7 +8,7 @@ DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
 
 
 ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, weapon_id_to_reinforce_type_id = get_reinforce_data()
-WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict = get_raw_data()
+WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict, weapon_weight, weapon_minimums = get_raw_data()
 CALC_CORRECT_DICT = get_weapon_calc_correct_id()
 
 #weapon upgrades component
@@ -119,10 +119,17 @@ def main():
         ar = combined_calc(bdr, bsr, psm)
         comp[weapon_id] = ar
 
-    highest_dmg = max(comp.values())
+    comp_weight_adjusted = {k: v for k, v in comp.items() if weapon_weight[str(weapon_id)] <= player_stats['wgt']}
+
+    for weapon_id in comp_weight_adjusted.keys():
+        for char_attr in PLAYER_STATS:
+            if weapon_minimums[char_attr] > player_stats[char_attr]:
+                del comp_weight_adjusted[weapon_id]
+
+    highest_dmg = max(comp_weight_adjusted.values())
     
     best_weapons = []
-    for k,v in comp.items():
+    for k,v in comp_weight_adjusted.items():
         if v == highest_dmg:
             best_weapons.append(k)
 
