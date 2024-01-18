@@ -22,13 +22,16 @@ def index():
     player_stats['wgt'] = ui.number().bind_value(weight, 'value')
 
     two_handed = ui.switch(text='Do you want to use this weapon two-handed? (This will multiply your STR value for the calculation by 1.5x).')
-        if ui.switch.value == True:
-            player_stats['str'] = base_player_str * 1.5
-        else:
-            player_stats['str'] = base_player_str * 1
+    if ui.switch.value == True:
+        player_stats['str'] = base_player_str * 1.5
+    else:
+        player_stats['str'] = base_player_str * 1
 
 
 
 with ui.row():
-    ui.button('Find your weapon!', color=red)
+    ui.button('Find your weapon!', color='red')
     ui.button('Save as JSON')
+
+if __name__ in {"__main__", "__mp_main__"}:
+    ui.run()

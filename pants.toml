@@ -1,5 +1,5 @@
 [GLOBAL]
-pants_version = "2.16.0"
+pants_version = "2.18.0"
 
 backend_packages = [
   "pants.backend.python",
@@ -17,7 +17,7 @@ search_path = [
 ]
 
 [source]
-root_patterns = ["src/", "test/", "static/"]
+root_patterns = ["src/", "test/", "static/", "web/"]
 
 [anonymous-telemetry]
 enabled = false
