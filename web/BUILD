@@ -2,5 +2,8 @@ python_requirements(source="requirements.txt")
 
 python_source(
     name="app",
-    source="main.py"
+    source="main.py",
+    dependencies=[
+        "src:src"
+    ],
 )

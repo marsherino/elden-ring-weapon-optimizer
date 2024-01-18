@@ -105,6 +105,40 @@ def combined_calc(base_damage_reinforcement, base_scaling_reinforcement, player_
         result.append(base_damage_reinforcement[dmg_type])
     return int(sum(result))
 
+def optimizer(player_stats):
+    comp = {}
+    for weapon_id in WeaponDamage.keys():
+        # Skip weapons whose CalcCorrectGraph values are greater than 8
+        if any([(int(x) > 8) for x in CALC_CORRECT_DICT[str(weapon_id)].values()]):
+            continue
+        bdr = base_damage_reinforcement(weapon_id)
+        bsr = base_scaling_reinforcement(weapon_id)
+        psm = player_scaling_multiplier(weapon_id, player_stats)
+        ar = combined_calc(bdr, bsr, psm)
+        comp[weapon_id] = ar
+
+    delete = []
+    for weapon_id in comp:
+        if float(weapon_weight[str(weapon_id)]) > float(player_stats['wgt']):
+            delete.append(weapon_id)
+        for char_attr in PLAYER_STATS:
+            if weapon_minimums[str(weapon_id)][char_attr] > player_stats[char_attr]:
+                delete.append(weapon_id)
+
+    delete = list(set(delete))
+    for i in delete:
+        del comp[i]
+
+    highest_dmg = max(comp.values())
+
+    best_weapons = []
+    for k,v in comp.items():
+        if v == highest_dmg:
+            best_weapons.append(k)
+
+    for weapon in best_weapons:
+        print(weapon_names_map[str(weapon)])
+
 def main():
     player_stats = get_saved_player_stats() or get_player_stats()
 
@@ -126,13 +160,13 @@ def main():
         for char_attr in PLAYER_STATS:
             if weapon_minimums[str(weapon_id)][char_attr] > player_stats[char_attr]:
                 delete.append(weapon_id)
-    
+
     delete = list(set(delete))
     for i in delete:
         del comp[i]
 
     highest_dmg = max(comp.values())
-    
+
     best_weapons = []
     for k,v in comp.items():
         if v == highest_dmg:
@@ -140,6 +174,4 @@ def main():
 
     for weapon in best_weapons:
         print(weapon_names_map[str(weapon)])
-        
-if __name__ == '__main__':
-    main()
+
