@@ -27,7 +27,7 @@ def index():
         player_stats['str'] = strength * 1.5
 
 with ui.row():
-    ui.button('Find your weapon!', color='red'):
+    ui.button('Find your weapon!', color='red')
     # optimizer(player_stats)
     # --> we should call the weapon_optimizer_v2 functions here to do some calculatio
 
