@@ -5,7 +5,6 @@ from CalcCorrectGraph import CalcCorrectGraph
 from dataclasses import dataclass
 from nicegui import ui, run
 
-player_stats = {}
 PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
 DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
 
@@ -20,11 +19,11 @@ class Player:
 
 @ui.page('/')
 def index():
-    async def run_weapon_optimizer():
+    async def run_weapon_optimizer(player_stats):
         ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, weapon_id_to_reinforce_type_id = get_reinforce_data()
         WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict, weapon_weight, weapon_minimums = get_raw_data()
         CALC_CORRECT_DICT = get_weapon_calc_correct_id()
-    
+
         result = await run.cpu_bound(optimizer, player_stats)
         ui.label(result)
 
@@ -44,15 +43,7 @@ def index():
     if two_handed:
         player.strength = int(float(player.strength) * 1.5)
 
-    player_stats = {
-                    'str': player.strength,
-                    'dex': player.dexterity,
-                    'int': player.intelligence,
-                    'fai': player.faith,
-                    'arc': player.arcane,
-                    'wgt': player.max_weight
-                   }
-    ui.button('Find your weapon!', on_click=lambda: run_weapon_optimizer(player_stats))
+    ui.button('Find your weapon!', on_click=lambda: run_weapon_optimizer({'str': player.strength, 'dex': player.dexterity, 'int': player.intelligence, 'fai': player.faith, 'arc': player.arcane, 'wgt': player.max_weight}))
 
 player = Player()
 
