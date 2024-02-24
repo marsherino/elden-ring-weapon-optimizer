@@ -137,7 +137,7 @@ def optimizer(player_stats):
             best_weapons.append(k)
 
     for weapon in best_weapons:
-        print(weapon_names_map[str(weapon)])
+        return weapon_names_map[str(weapon)]
 
 def main():
     player_stats = get_saved_player_stats() or get_player_stats()

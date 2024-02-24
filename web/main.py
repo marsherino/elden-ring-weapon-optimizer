@@ -1,10 +1,23 @@
-from nicegui import app, ui
-from weapon_optimizer_v2 import optimizer
+from weapon_optimizer_v2 import *
+from data_puller import *
+from AttackElementCorrectParam import AttackElementCorrectParam
+from CalcCorrectGraph import CalcCorrectGraph
+from nicegui import ui, run
 
 player_stats = {}
+PLAYER_STATS = ['str', 'dex', 'int', 'fai', 'arc']
+DMG_TYPES = ['phys', 'magic', 'fire', 'lightning', 'holy']
 
 @ui.page('/')
 def index():
+    async def run_weapon_optimizer():
+        ReinforceParamWeaponDamage, ReinforceParamWeaponScaling, weapon_id_to_reinforce_type_id = get_reinforce_data()
+        WeaponDamage, weapon_names_map, WeaponScaling, attack_element_correct_id_dict, weapon_weight, weapon_minimums = get_raw_data()
+        CALC_CORRECT_DICT = get_weapon_calc_correct_id()
+    
+        result = await run.cpu_bound(optimizer, player_stats)
+        ui.label(result)
+
     strength = ui.number(label='Strength (STR)', value=10, min=1, max=99, precision=0).props('clearable')
 
     dexterity = ui.number(label='Dexterity (DEX)', value=10, min=1, max=99, precision=0).props('clearable')
@@ -26,10 +39,6 @@ def index():
     if ui.switch.value:
         player_stats['str'] = strength * 1.5
 
-with ui.row():
-    ui.button('Find your weapon!', color='red')
-    # optimizer(player_stats)
-    # --> we should call the weapon_optimizer_v2 functions here to do some calculatio
+    ui.button('Find your weapon!', on_click=run_weapon_optimizer)
 
-if __name__ in {"__main__", "__mp_main__"}:
-    ui.run()
+ui.run(reload=False)
